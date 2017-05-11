@@ -9,6 +9,7 @@ from math import sin
 from random import random, gauss, choice, uniform
 
 #Variables
+#TODO: Add option to ask user to input parameters from cmd line
 
 # Determines how much fitness matters for sampling into the next generation
 selectionStrength = 0.5
@@ -40,25 +41,30 @@ bigGens = 1000
 # Number of generations at smaller size
 smallGens = 100
 
+# Core Functions
 # TODO: For better optimization, NumPy random functions would be more appropriate
 
-# Core Functions
+# Find the fitness of an individual based on its two alleles
 def computeFitness(aVal, bVal):
-    fitness = sin(7*aVal*bVal) + 1
+    fitness = sin(7*aVal*bVal) + 1 # multi-peak fitness function; use others for more complex behavior
     return fitness
 
+# Find the mean fitness for the population
 def computeMeanFit(popVec):
     fits = [computeFitness(popVec[2*i], popVec[2*i+1]) for i in range(popsize)]
     return sum(fits)/popsize
 
+# Find the mean value of all A alleles in population
 def calcMeanA(popVec):
     AVals = [popVec[2*i] for i in range(popsize)]
     return sum(AVals)/popsize
 
+# Find the mean value of all B alleles in population
 def calcMeanB(popVec):
     BVals = [popVec[2*i+1] for i in range(popsize)]
     return sum(BVals)/popsize
 
+# Mutate population stochastically based on global parameters
 def mutate(popVec):
     newVec = popVec
     for i in range(popsize):
@@ -75,6 +81,7 @@ def mutate(popVec):
 
     return newVec
 
+# Stochastically sample new population, weighted by mutation strength
 def selectPop(popVec):
     meanfit = computeMeanFit(popVec)
     nextPop = list(range(popsize*2))
@@ -89,6 +96,7 @@ def selectPop(popVec):
 
     return nextPop
 
+# Stochastically shrink or expand to new population size
 def resizePop(popVec):
     newVec = list(range(popsize*2))
     inds = list(range(popsize))
@@ -140,6 +148,9 @@ else:
          fitVec[j] = computeMeanFit(testPop)
          AMeans[j] = calcMeanA(testPop)
          BMeans[j] = calcMeanB(testPop)
+
+# Simulation Output
+# Write to file and parse for analysis
 
 print("A Allele Vector: ")
 print(AMeans)
